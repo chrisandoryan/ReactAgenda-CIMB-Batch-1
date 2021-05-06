@@ -2,17 +2,26 @@ import React from 'react';
 import AgendaCardComponent from '../AgendaCardComponent';
 import AgendaFormComponent from '../AgendaFormComponent';
 
+// active component
 class HomeClassComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             name: "Ryan",
-            agenda: {
-                agendaName: "Main Basket",
-                agendaDesc: "di Lapangan Banteng Subuh",
-                agendaDate: "15 Juni 2021",
-                agendaTime: "17.45"
-            }
+            agendas: [
+                {
+                    agendaName: "Makan Bakso",
+                    agendaDesc: "Bukber sama temen-temen SMA",
+                    agendaDate: "1 Mei 2021",
+                    agendaTime: "18.15"
+                },
+                {
+                    agendaName: "Meeting dengan Vendor IT Security",
+                    agendaDesc: "Rencana audit GDPR",
+                    agendaDate: "1 Juni 2021",
+                    agendaTime: "10.00"
+                },
+            ]
         }
         // data dalam component: state & props
     }
@@ -50,27 +59,59 @@ class HomeClassComponent extends React.Component {
         // remediasi: suruh user logout, atau tarik data ulang
     }
 
-    handleAgendaDelete = () => {
-        alert("Deleting agenda...");
-        let newAgenda = {
-            agendaName: "Kosong",
-            agendaDesc: "Kosong",
-            agendaDate: "Kosong",
-            agendaTime: "Kosong"
-        }
+    handleAgendaDelete = (id) => {
+        // delete data dari state agendas
+        this.setState((state, props) => {
+            // kasus mutable immutable
+            let currAgendas = [...state.agendas];
+            // console.log(currAgendas);
 
-        this.setState({
-            agenda: newAgenda
+            currAgendas.splice(id, 1);
+            // console.log(typeof(currAgendas));
+
+            return {
+                agendas: currAgendas
+            }
         });
+    }
+
+    handleAddAgenda = (agendaObject) => {
+        // cara yang kurang efektif
+        // let currAgendas = this.state.agendas;
+        // currAgendas.push(agendaObject);
+        // console.log('Agenda Array after Push', currAgendas);
+        // this.setState({
+        //     agendas: [...state.agendas, agendaObject]
+        // });
+
+        // cara lebih best practice
+        this.setState((state, props) => (
+            {
+                agendas: [...state.agendas, agendaObject]
+            }
+        ));
+
+        // jika menggunakan { } di anonymous function, jangan lupa kasih return
+        // this.setState((state, props) => {
+        //     return {
+        //         agenda: []
+        //     }
+        // })
     }
 
     render() {
         return (
             <div>
                 <h1>Add New Agenda</h1>
-                <AgendaFormComponent />
+                <AgendaFormComponent handleAddAgenda={this.handleAddAgenda} />
                 <h1>{this.state.name}'s Agenda</h1>
-                <AgendaCardComponent agendaName={this.state.agenda.agendaName} agendaDesc={this.state.agenda.agendaDesc} agendaDate={this.state.agenda.agendaDate} agendaTime={this.state.agenda.agendaTime} handleAgendaDelete={this.handleAgendaDelete} />
+                {
+                    this.state.agendas.map((dataAgenda, index) => (
+                        // <AgendaCardComponent agendaName={dataAgenda.agendaName} agendaDesc={dataAgenda.agendaDesc} agendaDate={dataAgenda.agendaDate} agendaTime={dataAgenda.agendaTime} handleAgendaDelete={this.handleAgendaDelete} />
+                        <AgendaCardComponent key={index} id={index} {...dataAgenda} handleAgendaDelete={this.handleAgendaDelete} />
+                    ))
+                }
+                
             </div>
         )    
     }

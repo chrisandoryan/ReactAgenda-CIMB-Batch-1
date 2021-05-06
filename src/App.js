@@ -3,6 +3,7 @@ import './App.css';
 import HomeClassComponent from './components/HomeClassComponent';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import HomeFunctionalComponent from './components/HomeFunctionalComponent';
 
 // npm start
 
@@ -37,7 +38,11 @@ function App() {
         <h1>ReactAgenda.io</h1>
         <p>Welcome and feel free to use our application.</p>
       </center>
+      <h1>Powered by Class Component</h1>
       <HomeClassComponent />
+      <hr></hr>
+      <h1>Powered by Functional Component</h1>
+      <HomeFunctionalComponent />
     </div>
   )
 }
