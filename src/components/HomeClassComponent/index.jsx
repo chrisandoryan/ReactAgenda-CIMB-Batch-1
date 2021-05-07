@@ -1,6 +1,13 @@
 import React from 'react';
 import AgendaCardComponent from '../AgendaCardComponent';
 import AgendaFormComponent from '../AgendaFormComponent';
+import LoadingComponent from '../LoadingComponent';
+import { EditAgendaModal } from '../ModalComponent';
+
+// TIPS and TRICKS
+// rapihin file code (autoformatter):
+// CTRL + K + CTRL + F
+
 
 // active component
 class HomeClassComponent extends React.Component {
@@ -21,7 +28,10 @@ class HomeClassComponent extends React.Component {
                     agendaDate: "1 Juni 2021",
                     agendaTime: "10.00"
                 },
-            ]
+            ],
+            isLoading: true,
+            showEditModal: false,
+            agendaToEdit: {}
         }
         // data dalam component: state & props
     }
@@ -30,7 +40,8 @@ class HomeClassComponent extends React.Component {
     componentDidMount() {
         setTimeout(() => {
             this.setState({
-                name: "Boby"
+                name: "Boby",
+                isLoading: false
             });
         }, 4000);
     }
@@ -63,6 +74,7 @@ class HomeClassComponent extends React.Component {
         // delete data dari state agendas
         this.setState((state, props) => {
             // kasus mutable immutable
+            // https://stackoverflow.com/questions/60550885/why-use-the-spread-operator-when-calling-setstate-in-react
             let currAgendas = [...state.agendas];
             // console.log(currAgendas);
 
@@ -75,7 +87,29 @@ class HomeClassComponent extends React.Component {
         });
     }
 
-    handleAddAgenda = (agendaObject) => {
+    handleAgendaEdit = (id) => {
+        this.setState({
+            showEditModal: true
+        });
+        let currAgendas = [...this.state.agendas];
+        let agendaToEdit = currAgendas[id];
+
+        // tambahin id pada object agenda yang ingin diedit
+        agendaToEdit.id = id;
+        console.log(agendaToEdit);
+
+        this.setState({
+            agendaToEdit: agendaToEdit
+        });
+    }
+
+    handleCloseModal = () => {
+        this.setState({
+            showEditModal: false
+        });
+    }
+
+    handleAddAgenda = (agendaObject, mode, id=null) => {
         // cara yang kurang efektif
         // let currAgendas = this.state.agendas;
         // currAgendas.push(agendaObject);
@@ -85,12 +119,21 @@ class HomeClassComponent extends React.Component {
         // });
 
         // cara lebih best practice
-        this.setState((state, props) => (
-            {
-                agendas: [...state.agendas, agendaObject]
-            }
-        ));
-
+        if (mode == "add") {
+            this.setState((state, props) => (
+                {
+                    agendas: [...state.agendas, agendaObject]
+                }
+            ));    
+        }
+        else if (mode == "edit") {
+            let currAgendas = [...this.state.agendas];
+            currAgendas[id] = agendaObject;
+            this.setState({
+                agendas: currAgendas
+            });
+        }
+    
         // jika menggunakan { } di anonymous function, jangan lupa kasih return
         // this.setState((state, props) => {
         //     return {
@@ -103,17 +146,21 @@ class HomeClassComponent extends React.Component {
         return (
             <div>
                 <h1>Add New Agenda</h1>
-                <AgendaFormComponent handleAddAgenda={this.handleAddAgenda} />
+                <AgendaFormComponent mode="add" handleAddAgenda={this.handleAddAgenda} />
                 <h1>{this.state.name}'s Agenda</h1>
                 {
-                    this.state.agendas.map((dataAgenda, index) => (
-                        // <AgendaCardComponent agendaName={dataAgenda.agendaName} agendaDesc={dataAgenda.agendaDesc} agendaDate={dataAgenda.agendaDate} agendaTime={dataAgenda.agendaTime} handleAgendaDelete={this.handleAgendaDelete} />
-                        <AgendaCardComponent key={index} id={index} {...dataAgenda} handleAgendaDelete={this.handleAgendaDelete} />
-                    ))
+                    this.state.isLoading == true ? (
+                        <LoadingComponent />
+                    ) : (
+                        this.state.agendas.map((dataAgenda, index) => (
+                            // <AgendaCardComponent agendaName={dataAgenda.agendaName} agendaDesc={dataAgenda.agendaDesc} agendaDate={dataAgenda.agendaDate} agendaTime={dataAgenda.agendaTime} handleAgendaDelete={this.handleAgendaDelete} />
+                            <AgendaCardComponent key={index} id={index} {...dataAgenda} handleAgendaDelete={this.handleAgendaDelete} handleAgendaEdit={this.handleAgendaEdit} />
+                        ))
+                    )
                 }
-                
+                <EditAgendaModal handleAddAgenda={this.handleAddAgenda} dataEdit={this.state.agendaToEdit} className="edit-modal" handleCloseModal={this.handleCloseModal} showModal={this.state.showEditModal} />
             </div>
-        )    
+        )
     }
 
 }

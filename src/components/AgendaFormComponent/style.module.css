@@ -1,0 +1,23 @@
+.form-container {
+    /* absolute unit */
+    /* margin: 2cm */
+    /* relative unit */
+    /* 
+    em: relatif terhadap font size dari elemen html tsb
+    contoh:
+        fontsize component: 12pt
+        margin: 2em; => 12 * 2 pt
+    rem: relatif terhadap font size dari root elemen nya (parent paling parentnya)
+        font size component: 12pt
+        font size root component: 10pt
+        margin: 2rem => 10 * 2 pt
+    */
+    margin: 2em;
+    padding: 1.5em;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.formlabel {
+    font-weight: bold;
+}

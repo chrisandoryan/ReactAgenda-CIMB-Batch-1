@@ -65,7 +65,7 @@ function HomeFunctionalComponent(props) {
     return (
         <div>
             <h1>Add New Agenda</h1>
-            <AgendaFormComponent handleAddAgenda={handleAddAgenda}/>
+            <AgendaFormComponent mode="add" handleAddAgenda={handleAddAgenda}/>
             <h1>{name}'s Agenda</h1>
             {
                 agendas.map((dataAgenda, index) => (
